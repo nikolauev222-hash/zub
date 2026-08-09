@@ -1,0 +1,59 @@
+name: Deploy WordPress theme
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: production-theme
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout theme repository
+        uses: actions/checkout@v4
+
+      - name: Configure SSH
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          HOST: ${{ secrets.HOST }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          # Prefer storing a pinned host key in a KNOWN_HOSTS secret for production.
+          ssh-keyscan -p "${PORT:-22}" -H "$HOST" >> ~/.ssh/known_hosts
+
+      - name: Validate destination and deploy active theme
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
+        run: |
+          set -euo pipefail
+          # REMOTE_PATH must be the exact active-theme directory, for example:
+          # /home/account/public_html/wp-content/themes/zub-industrial/
+          test -n "$HOST" && test -n "$USERNAME" && test -n "$REMOTE_PATH"
+          case "$REMOTE_PATH" in
+            */wp-content/themes/*/) ;;
+            *) echo "REMOTE_PATH must point to a theme directory and end with /" >&2; exit 1 ;;
+          esac
+          rsync -az --delete --delay-updates \
+            -e "ssh -i ~/.ssh/deploy_key -p ${PORT:-22}" \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='.env' \
+            --exclude='.gitignore' \
+            --exclude='node_modules/' \
+            --exclude='vendor/' \
+            --exclude='docs/' \
+            --exclude='README.md' \
+            --exclude='*.log' \
+            ./ "$USERNAME@$HOST:$REMOTE_PATH"
+
