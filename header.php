@@ -13,7 +13,7 @@
 <header class="site-header">
 	<div class="container site-header__inner">
 		<a class="brand" href="<?php echo esc_url( home_url( '/' ) ); ?>" aria-label="На главную">
-			<?php if ( has_custom_logo() ) : the_custom_logo(); else : ?><span class="brand__mark">Z</span><span>ЗУБ Инжиниринг<small>Промышленное производство</small></span><?php endif; ?>
+			<?php if ( has_custom_logo() ) : the_custom_logo(); else : ?><span class="brand__mark">K</span><span>kelrnand<small>Промышленное производство</small></span><?php endif; ?>
 		</a>
 		<button class="nav-toggle" type="button" aria-expanded="false" aria-controls="site-navigation"><span class="screen-reader-text">Открыть меню</span><span></span><span></span><span></span></button>
 		<nav class="site-nav" id="site-navigation" aria-label="Основная навигация">
@@ -22,4 +22,3 @@
 		<a class="button button--small header-cta" href="<?php echo esc_url( home_url( '/#contact' ) ); ?>">Обсудить задачу</a>
 	</div>
 </header>
-
