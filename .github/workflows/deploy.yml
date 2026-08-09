@@ -1,59 +1,69 @@
-name: Deploy WordPress theme
+name: Deploy WordPress theme via SFTP
 
 on:
   push:
-    branches: [main]
+    branches:
+      - codex/-wordpress
   workflow_dispatch:
 
 concurrency:
-  group: production-theme
+  group: wordpress-theme-production
   cancel-in-progress: false
 
 jobs:
   deploy:
+    name: Upload theme
     runs-on: ubuntu-latest
-    environment: production
     steps:
-      - name: Checkout theme repository
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Configure SSH
-        env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          HOST: ${{ secrets.HOST }}
-          PORT: ${{ secrets.PORT }}
-        run: |
-          install -m 700 -d ~/.ssh
-          printf '%s\n' "$SSH_PRIVATE_KEY" > ~/.ssh/deploy_key
-          chmod 600 ~/.ssh/deploy_key
-          # Prefer storing a pinned host key in a KNOWN_HOSTS secret for production.
-          ssh-keyscan -p "${PORT:-22}" -H "$HOST" >> ~/.ssh/known_hosts
+      - name: Install SFTP client
+        run: sudo apt-get update && sudo apt-get install --yes lftp
 
-      - name: Validate destination and deploy active theme
+      - name: Validate deployment settings
         env:
-          HOST: ${{ secrets.HOST }}
-          USERNAME: ${{ secrets.USERNAME }}
+          FTP: ${{ secrets.FTP }}
           PORT: ${{ secrets.PORT }}
-          REMOTE_PATH: ${{ secrets.REMOTE_PATH }}
+          NAME: ${{ secrets.NAME }}
+          PASS: ${{ secrets.PASS }}
+          URL: ${{ secrets.URL }}
         run: |
           set -euo pipefail
-          # REMOTE_PATH must be the exact active-theme directory, for example:
-          # /home/account/public_html/wp-content/themes/zub-industrial/
-          test -n "$HOST" && test -n "$USERNAME" && test -n "$REMOTE_PATH"
-          case "$REMOTE_PATH" in
-            */wp-content/themes/*/) ;;
-            *) echo "REMOTE_PATH must point to a theme directory and end with /" >&2; exit 1 ;;
-          esac
-          rsync -az --delete --delay-updates \
-            -e "ssh -i ~/.ssh/deploy_key -p ${PORT:-22}" \
-            --exclude='.git/' \
-            --exclude='.github/' \
-            --exclude='.env' \
-            --exclude='.gitignore' \
-            --exclude='node_modules/' \
-            --exclude='vendor/' \
-            --exclude='docs/' \
-            --exclude='README.md' \
-            --exclude='*.log' \
-            ./ "$USERNAME@$HOST:$REMOTE_PATH"
+          test -n "$FTP"
+          test -n "$PORT"
+          test -n "$NAME"
+          test -n "$PASS"
+          test -n "$URL"
+          [[ "$PORT" =~ ^[0-9]+$ ]]
+          [[ "$URL" =~ ^/[A-Za-z0-9._/-]+/$ ]]
 
+      - name: Deploy current repository via SFTP
+        env:
+          FTP: ${{ secrets.FTP }}
+          PORT: ${{ secrets.PORT }}
+          NAME: ${{ secrets.NAME }}
+          PASS: ${{ secrets.PASS }}
+          URL: ${{ secrets.URL }}
+        run: |
+          set -euo pipefail
+          lftp \
+            -u "$NAME","$PASS" \
+            -p "$PORT" \
+            "sftp://$FTP" \
+            -e "
+              set cmd:fail-exit yes;
+              set net:max-retries 2;
+              set net:timeout 20;
+              # GitHub runners have an empty known_hosts file; lftp records the
+              # server key for this ephemeral deployment session.
+              set sftp:auto-confirm yes;
+              mirror --reverse --verbose --parallel=4 \
+                --exclude-glob .git/ \
+                --exclude-glob .github/ \
+                --exclude-glob .env \
+                --exclude-glob node_modules/ \
+                --exclude-glob vendor/ \
+                ./ $URL;
+              bye
+            "
