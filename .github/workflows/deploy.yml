@@ -45,7 +45,7 @@ jobs:
           [[ "$PORT" =~ ^[0-9]+$ ]]
           [[ "$URL" =~ ^/[A-Za-z0-9._/-]+/$ ]]
 
-      - name: Deploy current repository via FTP
+      - name: Deploy all theme files via FTP
         env:
           FTP: ${{ secrets.FTP }}
           PORT: ${{ secrets.PORT }}
@@ -64,7 +64,7 @@ jobs:
               set net:timeout 20;
               set ftp:passive-mode yes;
               set ftp:ssl-allow no;
-              mirror --reverse --verbose --parallel=4 \
+              mirror --reverse --verbose --parallel=4 --transfer-all \
                 --exclude-glob .git/ \
                 --exclude-glob .github/ \
                 --exclude-glob .env \
