@@ -1,4 +1,4 @@
-name: Deploy WordPress theme via SFTP
+name: Deploy WordPress theme via FTP
 
 on:
   push:
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install SFTP client
+      - name: Install FTP client
         run: sudo apt-get update && sudo apt-get install --yes lftp
 
       - name: Validate deployment settings
@@ -44,7 +44,7 @@ jobs:
           [[ "$PORT" =~ ^[0-9]+$ ]]
           [[ "$URL" =~ ^/[A-Za-z0-9._/-]+/$ ]]
 
-      - name: Deploy current repository via SFTP
+      - name: Deploy current repository via FTP
         env:
           FTP: ${{ secrets.FTP }}
           PORT: ${{ secrets.PORT }}
@@ -56,14 +56,13 @@ jobs:
           lftp \
             -u "$NAME","$PASS" \
             -p "$PORT" \
-            "sftp://$FTP" \
+            "ftp://$FTP" \
             -e "
               set cmd:fail-exit yes;
               set net:max-retries 2;
               set net:timeout 20;
-              # GitHub runners have an empty known_hosts file; lftp records the
-              # server key for this ephemeral deployment session.
-              set sftp:auto-confirm yes;
+              set ftp:passive-mode yes;
+              set ftp:ssl-allow no;
               mirror --reverse --verbose --parallel=4 \
                 --exclude-glob .git/ \
                 --exclude-glob .github/ \
