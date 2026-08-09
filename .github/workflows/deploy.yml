@@ -34,16 +34,13 @@ jobs:
           PORT: ${{ secrets.PORT }}
           NAME: ${{ secrets.NAME }}
           PASS: ${{ secrets.PASS }}
-          URL: ${{ secrets.URL }}
         run: |
           set -euo pipefail
           test -n "$FTP"
           test -n "$PORT"
           test -n "$NAME"
           test -n "$PASS"
-          test -n "$URL"
           [[ "$PORT" =~ ^[0-9]+$ ]]
-          [[ "$URL" =~ ^/[A-Za-z0-9._/-]+/$ ]]
 
       - name: Deploy all theme files via FTP
         env:
@@ -51,7 +48,6 @@ jobs:
           PORT: ${{ secrets.PORT }}
           NAME: ${{ secrets.NAME }}
           PASS: ${{ secrets.PASS }}
-          URL: ${{ secrets.URL }}
         run: |
           set -euo pipefail
           lftp \
@@ -70,6 +66,6 @@ jobs:
                 --exclude-glob .env \
                 --exclude-glob node_modules/ \
                 --exclude-glob vendor/ \
-                ./ $URL;
+                ./ ./;
               bye
             "
