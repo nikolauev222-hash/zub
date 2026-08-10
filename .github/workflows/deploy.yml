@@ -53,7 +53,7 @@ jobs:
           lftp \
             -u "$NAME","$PASS" \
             -p "$PORT" \
-            "ftp://$FTP" \
+            "$FTP" \
             -e "
               set cmd:fail-exit yes;
               set net:max-retries 2;
