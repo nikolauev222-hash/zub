@@ -6,33 +6,100 @@
  */
 
 get_header();
+
+$services = zub_get_services();
+$labels   = array(
+	'lazernaya-rezka-listovogo-metalla'          => 'Лазерная обработка · Лист',
+	'lazernaya-rezka-trub'                       => 'Лазерная обработка · Труба',
+	'izgotovlenie-gidravlicheskikh-shlangov'     => 'Гидравлика · РВД',
+	'izgotovlenie-gidravlicheskikh-trubok'       => 'Гидравлика · Трубные сборки',
+	'robotizirovannaya-svarka'                   => 'Сварка · Серийное производство',
+	'tokarnye-raboty'                            => 'Мехобработка · Точение',
+	'frezernye-raboty'                           => 'Мехобработка · Фрезерование',
+	'poroshkovaya-pokraska-metalla'              => 'Покрытия · Фосфатирование',
+	'poluavtomaticheskaya-svarka'                => 'Сварка · Мелкая серия',
+	'ispytanie-gidravlicheskogo-oborudovaniya'   => 'Контроль · Лаборатория',
+);
 ?>
 <main id="main">
-	<section class="hero">
-		<div class="container hero__grid">
+	<section class="service-hero" aria-labelledby="service-hero-title" data-service-slider>
+		<div class="container service-hero__intro">
 			<div>
-				<p class="eyebrow">Металлообработка · Гидравлика · Сварка</p>
-				<h1>Производим металлические детали и гидравлические узлы под вашу задачу</h1>
-				<p class="hero__lead">От чертежа и образца до готовой партии: лазерная резка, механическая обработка, сварка, покраска и испытания.</p>
-				<div class="button-row">
-					<a class="button" href="tel:+70000000000">Получить консультацию</a>
-					<a class="button button--ghost" href="mailto:info@example.ru">Отправить чертёж</a>
-				</div>
-				<ul class="hero__facts">
-					<li>Работа по чертежам и 3D-моделям</li>
-					<li>Единичные и серийные заказы</li>
-					<li>Контроль на этапах производства</li>
-				</ul>
+				<p class="eyebrow"><?php echo esc_html( count( $services ) ); ?> производственных направлений</p>
+				<h1 id="service-hero-title">Производственные операции для деталей, узлов и гидравлических систем</h1>
 			</div>
-			<div class="hero__visual" aria-label="Схематичное изображение производственной детали">
-				<div class="blueprint" aria-hidden="true">
-					<span>01</span>
-					<span>3D</span>
-					<span>QC</span>
-				</div>
-				<p>Инженерный подход<br><strong>к каждой детали</strong></p>
+			<div class="service-hero__intro-copy">
+				<p>Выберите нужную технологию или начните с описания задачи. Работаем по чертежу, 3D-модели или образцу.</p>
+				<a class="button" href="mailto:info@example.ru">Отправить задачу</a>
 			</div>
 		</div>
+
+		<div class="container service-hero__stage">
+			<div class="service-hero__panels">
+				<?php foreach ( $services as $index => $service ) : ?>
+					<article
+						class="service-hero__panel"
+						id="service-panel-<?php echo esc_attr( $index ); ?>"
+						role="tabpanel"
+						aria-labelledby="service-tab-<?php echo esc_attr( $index ); ?>"
+						<?php echo 0 !== $index ? 'hidden' : ''; ?>
+					>
+						<div class="service-hero__visual" aria-hidden="true">
+							<span class="service-hero__visual-number"><?php echo esc_html( sprintf( '%02d', $index + 1 ) ); ?></span>
+							<span class="service-hero__visual-icon"><?php echo esc_html( $service['icon'] ); ?></span>
+							<span class="service-hero__visual-line"></span>
+						</div>
+						<div class="service-hero__content">
+							<p class="service-hero__label"><?php echo esc_html( $labels[ $service['slug'] ] ); ?></p>
+							<h2><?php echo esc_html( $service['title'] ); ?></h2>
+							<p><?php echo esc_html( $service['description'] ); ?></p>
+							<p class="service-hero__products"><strong>Типовые изделия:</strong> <?php echo esc_html( $service['use'] ); ?></p>
+							<div class="button-row">
+								<a class="button" href="<?php echo esc_url( home_url( '/uslugi/' . $service['slug'] . '/' ) ); ?>">Подробнее об услуге</a>
+								<a class="service-hero__text-link" href="mailto:info@example.ru?subject=<?php echo esc_attr( rawurlencode( $service['title'] ) ); ?>">Запросить расчёт →</a>
+							</div>
+						</div>
+					</article>
+				<?php endforeach; ?>
+			</div>
+
+			<div class="service-hero__navigation">
+				<p class="service-hero__navigation-title">Выберите услугу</p>
+				<div class="service-hero__tabs" role="tablist" aria-label="Производственные услуги">
+					<?php foreach ( $services as $index => $service ) : ?>
+						<button
+							class="service-hero__tab"
+							id="service-tab-<?php echo esc_attr( $index ); ?>"
+							type="button"
+							role="tab"
+							aria-selected="<?php echo 0 === $index ? 'true' : 'false'; ?>"
+							aria-controls="service-panel-<?php echo esc_attr( $index ); ?>"
+							tabindex="<?php echo 0 === $index ? '0' : '-1'; ?>"
+							data-service-tab="<?php echo esc_attr( $index ); ?>"
+						>
+							<span><?php echo esc_html( sprintf( '%02d', $index + 1 ) ); ?></span>
+							<strong><?php echo esc_html( $service['title'] ); ?></strong>
+						</button>
+					<?php endforeach; ?>
+				</div>
+				<div class="service-hero__controls">
+					<button type="button" data-service-prev aria-label="Предыдущая услуга">←</button>
+					<output data-service-count aria-live="polite">01 / <?php echo esc_html( sprintf( '%02d', count( $services ) ) ); ?></output>
+					<button type="button" data-service-next aria-label="Следующая услуга">→</button>
+				</div>
+			</div>
+		</div>
+
+		<noscript>
+			<div class="container service-hero__noscript">
+				<p>Все услуги:</p>
+				<ul>
+					<?php foreach ( $services as $service ) : ?>
+						<li><a href="<?php echo esc_url( home_url( '/uslugi/' . $service['slug'] . '/' ) ); ?>"><?php echo esc_html( $service['title'] ); ?></a></li>
+					<?php endforeach; ?>
+				</ul>
+			</div>
+		</noscript>
 	</section>
 </main>
 <?php get_footer(); ?>
