@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ZUB_THEME_VERSION', '1.0.1' );
+define( 'ZUB_THEME_VERSION', '1.0.2' );
 
 require_once get_template_directory() . '/inc/services.php';
 
@@ -29,10 +29,16 @@ function zub_theme_setup() {
 }
 add_action( 'after_setup_theme', 'zub_theme_setup' );
 
+function zub_asset_version( $relative_path ) {
+	$asset_path = get_template_directory() . '/' . ltrim( $relative_path, '/' );
+
+	return file_exists( $asset_path ) ? (string) filemtime( $asset_path ) : ZUB_THEME_VERSION;
+}
+
 function zub_enqueue_assets() {
-	wp_enqueue_style( 'zub-style', get_stylesheet_uri(), array(), ZUB_THEME_VERSION );
-	wp_enqueue_style( 'zub-main', get_template_directory_uri() . '/assets/css/main.css', array( 'zub-style' ), ZUB_THEME_VERSION );
-	wp_enqueue_script( 'zub-main', get_template_directory_uri() . '/assets/js/main.js', array(), ZUB_THEME_VERSION, true );
+	wp_enqueue_style( 'zub-style', get_stylesheet_uri(), array(), zub_asset_version( 'style.css' ) );
+	wp_enqueue_style( 'zub-main', get_template_directory_uri() . '/assets/css/main.css', array( 'zub-style' ), zub_asset_version( 'assets/css/main.css' ) );
+	wp_enqueue_script( 'zub-main', get_template_directory_uri() . '/assets/js/main.js', array(), zub_asset_version( 'assets/js/main.js' ), true );
 }
 add_action( 'wp_enqueue_scripts', 'zub_enqueue_assets' );
 
