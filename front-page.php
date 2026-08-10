@@ -20,6 +20,18 @@ $labels   = array(
 	'poluavtomaticheskaya-svarka'                => 'Сварка · Мелкая серия',
 	'ispytanie-gidravlicheskogo-oborudovaniya'   => 'Контроль · Лаборатория',
 );
+$short_titles = array(
+	'lazernaya-rezka-listovogo-metalla'        => 'Лазерная резка листа',
+	'lazernaya-rezka-trub'                     => 'Лазерная резка труб',
+	'izgotovlenie-gidravlicheskikh-shlangov'   => 'Гидрошланги и РВД',
+	'izgotovlenie-gidravlicheskikh-trubok'     => 'Гидравлические трубки',
+	'robotizirovannaya-svarka'                 => 'Роботизированная сварка',
+	'tokarnye-raboty'                          => 'Токарные работы',
+	'frezernye-raboty'                         => 'Фрезерные работы',
+	'poroshkovaya-pokraska-metalla'            => 'Порошковая покраска',
+	'poluavtomaticheskaya-svarka'              => 'Полуавтоматическая сварка',
+	'ispytanie-gidravlicheskogo-oborudovaniya' => 'Испытания гидрооборудования',
+);
 ?>
 <main id="main">
 	<section class="service-hero" aria-labelledby="service-hero-title" data-service-slider>
@@ -33,6 +45,24 @@ $labels   = array(
 				<a class="button" href="mailto:info@example.ru">Отправить задачу</a>
 			</div>
 		</div>
+
+		<nav class="container service-hero__quick-nav" aria-label="Все услуги">
+			<p class="service-hero__quick-title">Все услуги</p>
+			<ol class="service-hero__quick-list">
+				<?php foreach ( $services as $index => $service ) : ?>
+					<li>
+						<a
+							href="<?php echo esc_url( home_url( '/uslugi/' . $service['slug'] . '/' ) ); ?>"
+							aria-label="<?php echo esc_attr( $service['title'] ); ?>"
+						>
+							<span><?php echo esc_html( sprintf( '%02d', $index + 1 ) ); ?></span>
+							<strong><?php echo esc_html( $short_titles[ $service['slug'] ] ); ?></strong>
+							<span aria-hidden="true">↗</span>
+						</a>
+					</li>
+				<?php endforeach; ?>
+			</ol>
+		</nav>
 
 		<div class="container service-hero__stage">
 			<div class="service-hero__panels">
