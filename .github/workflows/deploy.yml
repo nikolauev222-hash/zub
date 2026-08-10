@@ -1,0 +1,77 @@
+name: Deploy WordPress theme via FTP
+run-name: Deploy ${{ github.ref_name }} at ${{ github.sha }}
+
+on:
+  push:
+    branches:
+      - codex/-wordpress
+  workflow_dispatch:
+
+concurrency:
+  group: wordpress-theme-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Upload theme
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'push' && github.ref == 'refs/heads/codex/-wordpress')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install FTP client
+        run: sudo apt-get update && sudo apt-get install --yes lftp
+
+      - name: Validate deployment settings
+        env:
+          FTP: ${{ secrets.FTP }}
+          PORT: ${{ secrets.PORT }}
+          NAME: ${{ secrets.NAME }}
+          PASS: ${{ secrets.PASS }}
+        run: |
+          set -euo pipefail
+          test -n "$FTP"
+          test -n "$PORT"
+          test -n "$NAME"
+          test -n "$PASS"
+          [[ "$PORT" =~ ^[0-9]+$ ]]
+
+      - name: Deploy all theme files via FTP
+        env:
+          FTP: ${{ secrets.FTP }}
+          PORT: ${{ secrets.PORT }}
+          NAME: ${{ secrets.NAME }}
+          PASS: ${{ secrets.PASS }}
+        run: |
+          set -euo pipefail
+          lftp \
+            -u "$NAME","$PASS" \
+            -p "$PORT" \
+            "ftp://$FTP" \
+            -e "
+              set cmd:fail-exit yes;
+              set net:max-retries 2;
+              set net:timeout 20;
+              set ftp:passive-mode yes;
+              set ftp:ssl-allow no;
+              # FTP account opens directly in the active theme directory.
+              # Upload repository contents into that current directory.
+              mirror --reverse --verbose --parallel=4 --transfer-all \
+                --exclude-glob .git/ \
+                --exclude-glob .gitignore \
+                --exclude-glob .github/ \
+                --exclude-glob .env \
+                --exclude-glob docs/ \
+                --exclude-glob README.md \
+                --exclude-glob node_modules/ \
+                --exclude-glob vendor/ \
+                ./ .;
+              bye
+            "
