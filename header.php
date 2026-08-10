@@ -19,6 +19,6 @@
 		<nav class="site-nav" id="site-navigation" aria-label="Основная навигация">
 			<?php wp_nav_menu( array( 'theme_location' => 'primary', 'container' => false, 'menu_class' => 'site-nav__list', 'fallback_cb' => 'zub_menu_fallback' ) ); ?>
 		</nav>
-		<a class="button button--small header-cta" href="<?php echo esc_url( home_url( '/#contact' ) ); ?>">Консультация</a>
+		<a class="button button--small header-cta" href="tel:+70000000000">Консультация</a>
 	</div>
 </header>

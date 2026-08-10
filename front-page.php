@@ -1,33 +1,38 @@
 <?php
-/** Front page. @package Zub_Industrial */
+/**
+ * Front page.
+ *
+ * @package Zub_Industrial
+ */
+
 get_header();
-$services       = zub_get_services();
-$contact_status = isset( $_GET['contact'] ) ? sanitize_key( wp_unslash( $_GET['contact'] ) ) : '';
 ?>
 <main id="main">
 	<section class="hero">
 		<div class="container hero__grid">
-			<div><p class="eyebrow">Металлообработка · Гидравлика · Сварка</p><h1>Производим металлические детали и гидравлические узлы под вашу задачу</h1><p class="hero__lead">От чертежа и образца до готовой партии: лазерная резка, механическая обработка, сварка, покраска и испытания.</p><div class="button-row"><a class="button" href="#contact">Рассчитать стоимость</a><a class="button button--ghost" href="#services">Смотреть услуги</a></div><ul class="hero__facts"><li>Работа по чертежам и 3D-моделям</li><li>Единичные и серийные заказы</li><li>Контроль на этапах производства</li></ul></div>
-			<div class="hero__visual" aria-label="Схематичное изображение производственной детали"><div class="blueprint"><span>01</span><span>3D</span><span>QC</span></div><p>Инженерный подход<br><strong>к каждой детали</strong></p></div>
+			<div>
+				<p class="eyebrow">Металлообработка · Гидравлика · Сварка</p>
+				<h1>Производим металлические детали и гидравлические узлы под вашу задачу</h1>
+				<p class="hero__lead">От чертежа и образца до готовой партии: лазерная резка, механическая обработка, сварка, покраска и испытания.</p>
+				<div class="button-row">
+					<a class="button" href="tel:+70000000000">Получить консультацию</a>
+					<a class="button button--ghost" href="mailto:info@example.ru">Отправить чертёж</a>
+				</div>
+				<ul class="hero__facts">
+					<li>Работа по чертежам и 3D-моделям</li>
+					<li>Единичные и серийные заказы</li>
+					<li>Контроль на этапах производства</li>
+				</ul>
+			</div>
+			<div class="hero__visual" aria-label="Схематичное изображение производственной детали">
+				<div class="blueprint" aria-hidden="true">
+					<span>01</span>
+					<span>3D</span>
+					<span>QC</span>
+				</div>
+				<p>Инженерный подход<br><strong>к каждой детали</strong></p>
+			</div>
 		</div>
 	</section>
-
-	<section class="section intro"><div class="container intro__grid"><p class="eyebrow">Единый производственный контур</p><div><h2>Закрываем комплекс задач в одном месте</h2><p>Помогаем промышленным предприятиям сократить число подрядчиков: изготавливаем детали, выполняем сварку и финишную обработку, собираем компоненты гидросистем и проводим испытания.</p></div></div></section>
-
-	<section class="section section--muted" id="services"><div class="container"><div class="section-heading"><div><p class="eyebrow">Направления работ</p><h2>Производственные услуги</h2></div><p>Подберём технологию под материал, геометрию, объём партии и требования документации.</p></div><div class="services-grid">
-	<?php foreach ( $services as $index => $service ) : ?>
-		<article class="service-card" id="<?php echo esc_attr( $service['slug'] ); ?>"><div class="service-card__top"><span class="service-card__number"><?php echo esc_html( sprintf( '%02d', $index + 1 ) ); ?></span><span class="service-card__icon" aria-hidden="true"><?php echo esc_html( $service['icon'] ); ?></span></div><h3><?php echo esc_html( $service['title'] ); ?></h3><p><?php echo esc_html( $service['description'] ); ?></p><p class="service-card__use"><strong>Типовые изделия:</strong> <?php echo esc_html( $service['use'] ); ?></p><a href="#contact" data-service="<?php echo esc_attr( $service['title'] ); ?>">Запросить расчёт <span aria-hidden="true">→</span></a></article>
-	<?php endforeach; ?>
-	</div></div></section>
-
-	<section class="section" id="capabilities"><div class="container"><div class="section-heading"><div><p class="eyebrow">Отрасли и возможности</p><h2>Работаем с промышленными задачами</h2></div><p>Уточняем критичные параметры до запуска и согласовываем технологический маршрут.</p></div><div class="pill-list"><span>Машиностроение</span><span>Спецтехника</span><span>Сельхозтехника</span><span>Производственные линии</span><span>Строительные конструкции</span><span>Ремонтные предприятия</span></div><div class="capability-grid"><article><span>01</span><h3>Документация</h3><p>Принимаем чертежи, 3D-модели и образцы. Проверяем исходные данные перед расчётом.</p></article><article><span>02</span><h3>Производство</h3><p>Подбираем последовательность операций для единичных деталей и серийных партий.</p></article><article><span>03</span><h3>Контроль</h3><p>Контролируем согласованные размеры и параметры, при необходимости проводим лабораторные испытания.</p></article></div></div></section>
-
-	<section class="section quality"><div class="container quality__grid"><div><p class="eyebrow">Качество и испытания</p><h2>Результат подтверждается контролем</h2><p>Требования к материалу, геометрии, соединениям и покрытию фиксируются до начала работ. Для гидравлического оборудования доступна проверка по согласованной программе.</p><a class="text-link" href="#contact">Обсудить требования к контролю →</a></div><ul class="check-list"><li>Входная проверка документации</li><li>Межоперационный контроль</li><li>Проверка готового изделия</li><li>Фиксация результатов испытаний</li></ul></div></section>
-
-	<section class="section" id="process"><div class="container"><p class="eyebrow">Порядок работы</p><h2>Понятный путь от запроса до отгрузки</h2><ol class="process"><li><span>01</span><h3>Получаем задачу</h3><p>Чертёж, модель, фото или образец.</p></li><li><span>02</span><h3>Уточняем требования</h3><p>Материал, объём, сроки и контроль.</p></li><li><span>03</span><h3>Рассчитываем</h3><p>Согласовываем стоимость и условия.</p></li><li><span>04</span><h3>Производим</h3><p>Выполняем работы и проверку.</p></li><li><span>05</span><h3>Передаём заказ</h3><p>Готовим к отгрузке или выдаче.</p></li></ol></div></section>
-
-	<section class="section section--dark"><div class="container advantages"><div><p class="eyebrow">Почему с нами удобно</p><h2>Производство с инженерной ответственностью</h2></div><ul><li><strong>Комплексный подход</strong><span>Несколько технологических операций у одного исполнителя.</span></li><li><strong>Работа с документацией</strong><span>Исходные требования проверяются до запуска заказа.</span></li><li><strong>Гибкость партий</strong><span>Решения для единичных, мелкосерийных и серийных изделий.</span></li><li><strong>Прозрачная коммуникация</strong><span>Согласовываем ключевые параметры, сроки и результат.</span></li></ul></div></section>
-
-	<section class="section contact" id="contact"><div class="container contact__grid"><div><p class="eyebrow">Обсудим проект</p><h2>Отправьте чертёж или опишите задачу</h2><p>Укажите материал, количество и желаемый срок. Специалист свяжется с вами, чтобы уточнить данные для расчёта.</p><div class="contact__links"><a href="tel:+70000000000">+7 (000) 000-00-00</a><a href="mailto:info@example.ru">info@example.ru</a></div><p class="contact__note">Перед запуском замените демонстрационные контакты на реальные.</p></div><form class="contact-form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post"><input type="hidden" name="action" value="zub_contact"><?php wp_nonce_field( 'zub_contact', 'zub_contact_nonce' ); ?><div class="form-honeypot" aria-hidden="true"><label>Не заполняйте это поле<input type="text" name="website" tabindex="-1" autocomplete="off"></label></div><?php if ( 'sent' === $contact_status ) : ?><p class="form-status form-status--success" role="status">Спасибо! Заявка отправлена.</p><?php elseif ( 'error' === $contact_status ) : ?><p class="form-status form-status--error" role="alert">Не удалось отправить заявку. Проверьте поля или свяжитесь с нами напрямую.</p><?php endif; ?><label>Ваше имя <input type="text" name="name" autocomplete="name" required></label><label>Телефон или email <input type="text" name="contact" autocomplete="tel" required></label><label>Кратко о задаче <textarea name="message" rows="5" placeholder="Материал, размеры, количество, срок"></textarea></label><button class="button" type="submit">Отправить заявку</button><small>Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</small></form></div></section>
 </main>
 <?php get_footer(); ?>

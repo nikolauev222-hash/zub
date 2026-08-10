@@ -45,10 +45,8 @@ add_action( 'wp_enqueue_scripts', 'zub_enqueue_assets' );
 function zub_menu_fallback() {
 	?>
 	<ul class="site-nav__list">
-		<li><a href="<?php echo esc_url( home_url( '/#services' ) ); ?>">Услуги</a></li>
-		<li><a href="<?php echo esc_url( home_url( '/#capabilities' ) ); ?>">Возможности</a></li>
-		<li><a href="<?php echo esc_url( home_url( '/#process' ) ); ?>">Как работаем</a></li>
-		<li><a href="<?php echo esc_url( home_url( '/#contact' ) ); ?>">Контакты</a></li>
+		<li><a href="tel:+70000000000">Позвонить</a></li>
+		<li><a href="mailto:info@example.ru">Написать</a></li>
 	</ul>
 	<?php
 }
