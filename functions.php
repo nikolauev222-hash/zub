@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'ZUB_THEME_VERSION', '1.0.0' );
+define( 'ZUB_THEME_VERSION', '1.0.1' );
 
 require_once get_template_directory() . '/inc/services.php';
 
