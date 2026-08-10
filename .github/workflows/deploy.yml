@@ -61,12 +61,17 @@ jobs:
               set net:timeout 20;
               set ftp:passive-mode yes;
               set ftp:ssl-allow no;
+              # FTP account opens directly in the active theme directory.
+              # Upload repository contents into that current directory.
               mirror --reverse --verbose --parallel=4 --transfer-all \
                 --exclude-glob .git/ \
+                --exclude-glob .gitignore \
                 --exclude-glob .github/ \
                 --exclude-glob .env \
+                --exclude-glob docs/ \
+                --exclude-glob README.md \
                 --exclude-glob node_modules/ \
                 --exclude-glob vendor/ \
-                ./ ./;
+                ./ .;
               bye
             "
